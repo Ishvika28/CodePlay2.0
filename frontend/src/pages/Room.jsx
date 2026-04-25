@@ -1,87 +1,160 @@
 import { useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 
-function Room(){
+function Room() {
 
   const { roomCode } = useParams()
+
   const [room, setRoom] = useState(null)
+  const [tab, setTab] = useState("problems")
 
-  useEffect(()=>{
+  const userId = localStorage.getItem("userId")
 
-    const fetchRoom = async () => {
+  const fetchRoom = async () => {
+    const token = localStorage.getItem("token")
 
-      const token = localStorage.getItem("token")
+    const res = await fetch(`http://localhost:5000/api/rooms/${roomCode}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
-      const res = await fetch(`http://localhost:5000/api/rooms/${roomCode}`,{
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      })
+    const data = await res.json()
+    setRoom(data)
+  }
 
-      const data = await res.json()
+  useEffect(() => {
+    fetchRoom()
+    const interval = setInterval(fetchRoom, 3000)
+    return () => clearInterval(interval)
+  }, [])
 
-      setRoom(data)
-    }
+  const startContest = async () => {
+    const token = localStorage.getItem("token")
+
+    await fetch(`http://localhost:5000/api/rooms/${roomCode}/start`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
     fetchRoom()
+  }
 
-  },[roomCode])
+  if (!room) return <div className="text-white p-10">Loading...</div>
 
-  if(!room) return <p>Loading room...</p>
+  const isHost = room.host === userId
 
-  return(
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex">
 
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white p-12">
+      {/* 🔥 SIDEBAR */}
+      <aside className="w-64 bg-black/50 backdrop-blur-lg border-r border-white/10 p-6 flex flex-col justify-between">
 
-      <h1 className="text-3xl font-bold mb-6">
-        Room: {room.roomName}
-      </h1>
+        <div>
+          <h2 className="text-2xl font-semibold mb-8">⚔ Battleground</h2>
 
-      {/* Participants */}
+          <button
+            onClick={() => setTab("problems")}
+            className={`block w-full text-left px-3 py-2 rounded mb-2 ${
+              tab === "problems" ? "bg-white text-black" : "hover:bg-white/10"
+            }`}
+          >
+            Problems
+          </button>
 
-      <div className="mb-10">
+          <button
+            onClick={() => setTab("leaderboard")}
+            className={`block w-full text-left px-3 py-2 rounded ${
+              tab === "leaderboard" ? "bg-white text-black" : "hover:bg-white/10"
+            }`}
+          >
+            Leaderboard
+          </button>
+        </div>
 
-        <h2 className="text-xl font-semibold mb-4">
-          Participants
-        </h2>
+        <div className="text-sm text-gray-400">
+          Room: {room.roomCode}
+        </div>
 
-        <ul className="text-gray-400">
+      </aside>
 
-          {room.participants.map((p)=>(
-            <li key={p._id}>{p.name}</li>
-          ))}
+      {/* 🔥 MAIN CONTENT */}
+      <main className="flex-1 p-8 overflow-y-auto">
 
-        </ul>
+        <h1 className="text-3xl font-bold mb-6">{room.roomName}</h1>
 
-      </div>
+        {/* 🟡 LOBBY */}
+        {room.status === "waiting" && (
+          <div className="grid md:grid-cols-2 gap-6">
 
-      {/* Problems */}
+            {/* Room Info */}
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+              <h2 className="text-xl mb-4">Room Code</h2>
+              <p className="text-3xl font-bold tracking-widest">
+                {room.roomCode}
+              </p>
+            </div>
 
-      <div>
+            {/* Participants */}
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+              <h2 className="text-xl mb-4">Players</h2>
 
-        <h2 className="text-xl font-semibold mb-4">
-          Problems
-        </h2>
+              {room.participants.map((p, i) => (
+                <div key={i} className="py-1">
+                  • {p.name}
+                </div>
+              ))}
+            </div>
 
-        <ul>
+            {/* Start Button */}
+            {isHost && (
+              <div className="col-span-2">
+                <button
+                  onClick={startContest}
+                  className="w-full py-4 bg-green-500 text-black text-lg font-semibold rounded-xl hover:bg-green-400 transition"
+                >
+                  🚀 Start Contest
+                </button>
+              </div>
+            )}
 
-          {room.problems.map((problem)=>(
-            <li key={problem._id} className="mb-2">
+          </div>
+        )}
 
-              <Link
-                to={`/room/${roomCode}/problem/${problem._id}`}
-                className="text-blue-400 hover:text-blue-300"
+        {/* 🟢 RUNNING - PROBLEMS */}
+        {room.status === "running" && tab === "problems" && (
+          <div className="grid gap-4">
+
+            {room.problems.map((p, i) => (
+              <div
+                key={p._id}
+                className="p-5 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition flex justify-between items-center"
               >
-                {problem.title}
-              </Link>
+                <div>
+                  <h3 className="text-lg font-semibold">
+                    {i + 1}. {p.title}
+                  </h3>
+                </div>
 
-            </li>
-          ))}
+                <Link
+                  to={`/room/${roomCode}/problem/${p._id}`}
+                  className="px-4 py-2 bg-white text-black rounded-lg"
+                >
+                  Solve
+                </Link>
+              </div>
+            ))}
 
-        </ul>
+          </div>
+        )}
 
-      </div>
+        {/* 🟢 LEADERBOARD */}
+        {room.status === "running" && tab === "leaderboard" && (
+          <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+            <h2 className="text-xl mb-4">Leaderboard</h2>
+            <p className="text-gray-400">Coming soon...</p>
+          </div>
+        )}
 
+      </main>
     </div>
   )
 }

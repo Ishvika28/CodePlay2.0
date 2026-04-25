@@ -26,3 +26,15 @@ body {
   from { transform: translateY(-20px) translateX(-20px); }
   to { transform: translateY(20px) translateX(20px); }
 }
+
+.input {
+  @apply bg-black/40 border border-white/10 rounded-lg px-4 py-3 focus:outline-none focus:border-white/30;
+}
+
+.btn-primary {
+  @apply bg-white text-black py-3 rounded-lg font-semibold hover:bg-gray-200 transition;
+}
+
+.card {
+  @apply bg-white/5 border border-white/10 rounded-lg p-4;
+}

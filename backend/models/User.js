@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema(
     rating: {
         type: Number,
         default: 1000
+    },
+
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
     }
 },
 {

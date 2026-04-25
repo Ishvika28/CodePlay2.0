@@ -27,12 +27,14 @@ function Login() {
       const data = await response.json()
 
       if (data.token) {
-
         localStorage.setItem("token", data.token)
-
-        navigate("/dashboard")
-
-      } else {
+        localStorage.setItem("role", data.user.role)
+        if (data.user.role === "admin") {
+          navigate("/admin")
+        } else {
+          navigate("/dashboard")
+        }
+      } else {  
 
         alert(data.message)
 

@@ -18,6 +18,21 @@ const problemSchema = new mongoose.Schema({
     required: true
   },
 
+  // ✅ NEW FIELD
+  topic: {
+    type: String,
+    enum: [
+      "array",
+      "string",
+      "math",
+      "recursion",
+      "dp",
+      "graph",
+      "greedy"
+    ],
+    required: true
+  },
+
   sampleTestCases: [
     {
       input: String,

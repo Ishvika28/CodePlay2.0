@@ -1,56 +1,61 @@
-const Problem = require("../models/Problem")
 const Room = require("../models/Room")
+const generateRoomCode = require("../utils/generateRoomCode")
+const selectProblems = require("../utils/selectProblems")
 
-// generate random room code
-const generateRoomCode = () => {
-  return Math.random().toString(36).substring(2, 8).toUpperCase()
-}
-
-// create room
+// CREATE ROOM
 const createRoom = async (req, res) => {
-
-  const { roomName } = req.body
-
   try {
+    const {
+      roomName,
+      difficulty = "any",
+      topic = "any",
+      problemCount = 3,
+      duration = 30,
+      maxParticipants = 10
+    } = req.body
 
-    const roomCode = generateRoomCode()
+    const roomCode = await generateRoomCode()
 
-    // get random problems
-    const problems = await Problem.find().limit(3)
+    const problems = await selectProblems(
+      difficulty,
+      topic,
+      problemCount
+    )
 
     const room = await Room.create({
       roomName,
       roomCode,
       host: req.user._id,
       participants: [req.user._id],
-      problems: problems.map(p => p._id)
+      problems: problems.map(p => p._id),
+      difficulty,
+      topic,
+      duration,
+      maxParticipants
     })
 
-    res.json(room)
+    res.status(201).json(room)
 
   } catch (error) {
-
-    console.log(error)
-
-    res.status(500).json({
-      message: "Failed to create room"
-    })
-
+    res.status(500).json({ message: error.message })
   }
-
 }
 
-// join room
+// JOIN ROOM
 const joinRoom = async (req, res) => {
-
-  const { roomCode } = req.body
-
   try {
+    const { roomCode } = req.body
 
     const room = await Room.findOne({ roomCode })
 
-    if (!room) {
-      return res.status(404).json({ message: "Room not found" })
+    if (!room) return res.status(404).json({ message: "Room not found" })
+
+    if (room.status !== "waiting") {
+      return res.status(400).json({ message: "Contest already started" })
+    }
+
+    if (room.participants.length >= room.maxParticipants) {
+      return res.status(400).json({ message: "Room full" })
     }
 
     if (!room.participants.includes(req.user._id)) {
@@ -60,24 +65,20 @@ const joinRoom = async (req, res) => {
 
     res.json(room)
 
-  } catch (error) {
-
-    res.status(500).json({ message: "Failed to join room" })
-
+  } catch {
+    res.status(500).json({ message: "Join failed" })
   }
-
 }
 
-// get room details
+// GET ROOM (SAFE)
 const getRoom = async (req, res) => {
-
-  const { roomCode } = req.params
-
   try {
-
-    const room = await Room.findOne({ roomCode })
-      .populate("participants", "name email")
-      .populate("problems")
+    const room = await Room.findOne({ roomCode: req.params.roomCode })
+      .populate("participants", "name")
+      .populate({
+        path: "problems",
+        select: "-hiddenTestCases"
+      })
 
     if (!room) {
       return res.status(404).json({ message: "Room not found" })
@@ -85,16 +86,39 @@ const getRoom = async (req, res) => {
 
     res.json(room)
 
-  } catch (error) {
-
+  } catch {
     res.status(500).json({ message: "Error fetching room" })
-
   }
+}
 
+// START ROOM
+const startRoom = async (req, res) => {
+  try {
+    const room = await Room.findOne({ roomCode: req.params.roomCode })
+
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" })
+    }
+
+    if (room.host.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Only host can start" })
+    }
+
+    room.status = "running"
+    room.startTime = new Date()
+
+    await room.save()
+
+    res.json(room)
+
+  } catch {
+    res.status(500).json({ message: "Start failed" })
+  }
 }
 
 module.exports = {
   createRoom,
   joinRoom,
-  getRoom
+  getRoom,
+  startRoom
 }
