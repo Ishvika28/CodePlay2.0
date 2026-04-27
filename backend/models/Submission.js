@@ -38,6 +38,21 @@ const submissionSchema = new mongoose.Schema({
   timeSubmitted: {
     type: Date,
     default: Date.now
+  },
+
+  executionTimeMs: {
+    type: Number,
+    default: 0
+  },
+
+  memoryMB: {
+    type: Number,
+    default: 0
+  },
+
+  timeTakenMs: {
+    type: Number,
+    default: 0
   }
 
 })

@@ -96,36 +96,37 @@ function Leaderboard() {
                   <th className="py-3">Rank</th>
                   <th className="py-3">User</th>
                   <th className="py-3">Solved</th>
-
+                  <th className="py-3">Time Complexity (ms)</th>
+                  <th className="py-3">Space Complexity (MB)</th>
+                  <th className="py-3">Time Taken (s)</th>
                 </tr>
-
               </thead>
-
               <tbody>
-
                 {leaders.map((user, index) => (
-
                   <tr
                     key={index}
-                    className="border-b border-white/5 hover:bg-white/5 transition"
+                    className="border-b border-white/5 hover:bg-white/5 transition text-gray-300"
                   >
-
-                    <td className="py-3 font-bold text-purple-400">
-                      {index + 1}
+                    <td className="py-4 font-bold text-blue-400">
+                      #{index + 1}
                     </td>
-
-                    <td className="py-3">
+                    <td className="py-4 font-medium text-white">
                       {user.name}
                     </td>
-
-                    <td className="py-3">
+                    <td className="py-4 font-bold text-green-400">
                       {user.solved}
                     </td>
-
+                    <td className="py-4 font-mono text-purple-400">
+                      {user.executionTimeMs} ms
+                    </td>
+                    <td className="py-4 font-mono text-pink-400">
+                      {user.memoryMB} MB
+                    </td>
+                    <td className="py-4 font-mono text-yellow-400">
+                      {Math.floor(user.timeTakenMs / 1000)} s
+                    </td>
                   </tr>
-
                 ))}
-
               </tbody>
 
             </table>

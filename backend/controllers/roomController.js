@@ -84,7 +84,8 @@ const getRoom = async (req, res) => {
       return res.status(404).json({ message: "Room not found" })
     }
 
-    res.json(room)
+    const isHost = room.host.toString() === req.user._id.toString()
+    res.json({ ...room.toObject(), isHost })
 
   } catch {
     res.status(500).json({ message: "Error fetching room" })
@@ -102,6 +103,10 @@ const startRoom = async (req, res) => {
 
     if (room.host.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Only host can start" })
+    }
+
+    if (room.participants.length < 2) {
+      return res.status(400).json({ message: "At least 2 participants required to start the match" })
     }
 
     room.status = "running"

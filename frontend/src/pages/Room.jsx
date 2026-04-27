@@ -40,7 +40,7 @@ function Room() {
 
   if (!room) return <div className="text-white p-10">Loading...</div>
 
-  const isHost = room.host === userId
+  const isHost = room.isHost
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex">
@@ -109,10 +109,18 @@ function Room() {
               <div className="col-span-2">
                 <button
                   onClick={startContest}
-                  className="w-full py-4 bg-green-500 text-black text-lg font-semibold rounded-xl hover:bg-green-400 transition"
+                  disabled={room.participants.length < 2}
+                  className={`w-full py-4 text-black text-lg font-semibold rounded-xl transition ${
+                    room.participants.length < 2 
+                      ? "bg-gray-500 cursor-not-allowed opacity-50" 
+                      : "bg-green-500 hover:bg-green-400"
+                  }`}
                 >
                   🚀 Start Contest
                 </button>
+                {room.participants.length < 2 && (
+                  <p className="text-center text-gray-400 mt-2 text-sm">Waiting for at least 2 players to start...</p>
+                )}
               </div>
             )}
 
