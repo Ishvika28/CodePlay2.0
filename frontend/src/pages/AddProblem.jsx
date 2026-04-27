@@ -14,13 +14,26 @@ function AddProblem() {
     title: "",
     description: "",
     difficulty: "easy",
-    topic: "",
+    topic: "array",
     sampleTestCases: [{ input: "", output: "" }],
     hiddenTestCases: [{ input: "", output: "" }]
   });
 
+  const topics = [
+    "array",
+    "string",
+    "math",
+    "recursion",
+    "dp",
+    "graph",
+    "greedy"
+  ];
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value.toLowerCase()
+    });
   };
 
   const handleTestCaseChange = (index, field, value, type) => {
@@ -37,6 +50,8 @@ function AddProblem() {
   };
 
   const removeTestCase = (index, type) => {
+    if (form[type].length === 1) return;
+
     const updated = form[type].filter((_, i) => i !== index);
     setForm({ ...form, [type]: updated });
   };
@@ -46,19 +61,25 @@ function AddProblem() {
 
     const token = localStorage.getItem("token");
 
+    const cleanedForm = {
+      ...form,
+      topic: form.topic.toLowerCase(),
+      difficulty: form.difficulty.toLowerCase()
+    };
+
     const res = await fetch("http://localhost:5000/api/problems", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(form)
+      body: JSON.stringify(cleanedForm)
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      alert("Problem created");
+      alert("Problem created successfully");
       navigate("/admin/problems");
     } else {
       alert(data.message);
@@ -112,27 +133,15 @@ function AddProblem() {
 
         <nav className="flex flex-col gap-6 text-gray-300 text-sm">
 
-          <Link
-            to="/admin"
-            onClick={() => setOpen(false)}
-            className="hover:text-white transition"
-          >
+          <Link to="/admin" onClick={() => setOpen(false)}>
             Dashboard
           </Link>
 
-          <Link
-            to="/admin/add-problem"
-            onClick={() => setOpen(false)}
-            className="text-white font-medium"
-          >
+          <Link to="/admin/add-problem" onClick={() => setOpen(false)} className="text-white font-medium">
             Add Problem
           </Link>
 
-          <Link
-            to="/admin/problems"
-            onClick={() => setOpen(false)}
-            className="hover:text-white transition"
-          >
+          <Link to="/admin/problems" onClick={() => setOpen(false)}>
             View Problems
           </Link>
 
@@ -142,75 +151,91 @@ function AddProblem() {
       {/* MAIN */}
       <main className="p-6 md:p-10 relative z-10">
 
-        {/* BIGGER HEADING */}
         <h1 className="text-3xl md:text-4xl font-bold mb-8">
           Add Problem
         </h1>
 
         <form
           onSubmit={handleSubmit}
-          className="max-w-4xl mx-auto bg-white/5 border border-white/10 rounded-xl p-6 md:p-8 space-y-6"
+          className="max-w-4xl mx-auto bg-gradient-to-br from-white/10 to-white/5 border border-white/10 rounded-2xl p-6 md:p-8 space-y-6 shadow-2xl backdrop-blur-xl"
         >
 
           <input
             name="title"
-            placeholder="Title"
+            placeholder="Problem Title"
+            value={form.title}
             onChange={handleChange}
-            className="w-full p-3 bg-black/40 rounded-lg"
+            required
+            className="w-full p-3 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20"
           />
 
           <textarea
             name="description"
-            placeholder="Description"
+            placeholder="Detailed problem description"
+            value={form.description}
             onChange={handleChange}
-            className="w-full p-3 bg-black/40 rounded-lg"
-          />
-
-          <input
-            name="topic"
-            placeholder="Topic (Arrays, DP...)"
-            onChange={handleChange}
-            className="w-full p-3 bg-black/40 rounded-lg"
+            required
+            rows="5"
+            className="w-full p-3 bg-black/40 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20"
           />
 
           <select
-            name="difficulty"
+            name="topic"
+            value={form.topic}
             onChange={handleChange}
-            className="w-full p-3 bg-black/40 rounded-lg"
+            className="w-full p-3 bg-black/40 border border-white/10 rounded-lg"
           >
-            <option>easy</option>
-            <option>medium</option>
-            <option>hard</option>
+            {topics.map((topic) => (
+              <option key={topic} value={topic}>
+                {topic.toUpperCase()}
+              </option>
+            ))}
           </select>
 
-          {/* TEST CASES */}
+          <select
+            name="difficulty"
+            value={form.difficulty}
+            onChange={handleChange}
+            className="w-full p-3 bg-black/40 border border-white/10 rounded-lg"
+          >
+            <option value="easy">EASY</option>
+            <option value="medium">MEDIUM</option>
+            <option value="hard">HARD</option>
+          </select>
+
           {["sampleTestCases", "hiddenTestCases"].map((type) => (
             <div key={type}>
-              <h2 className="text-lg font-semibold mb-3 capitalize">
+              <h2 className="text-xl font-semibold mb-4 capitalize border-b border-white/10 pb-2">
                 {type}
               </h2>
 
               {form[type].map((tc, i) => (
-                <div key={i} className="flex gap-3 mb-3">
+                <div key={i} className="grid md:grid-cols-2 gap-3 mb-4">
 
-                  <input
-                    placeholder="input"
-                    onChange={(e)=>handleTestCaseChange(i,"input",e.target.value,type)}
-                    className="flex-1 p-2 bg-black/40 rounded"
+                  <textarea
+                    placeholder="Input"
+                    value={tc.input}
+                    onChange={(e) =>
+                      handleTestCaseChange(i, "input", e.target.value, type)
+                    }
+                    className="w-full p-3 bg-black/40 border border-white/10 rounded-lg"
                   />
 
-                  <input
-                    placeholder="output"
-                    onChange={(e)=>handleTestCaseChange(i,"output",e.target.value,type)}
-                    className="flex-1 p-2 bg-black/40 rounded"
+                  <textarea
+                    placeholder="Output"
+                    value={tc.output}
+                    onChange={(e) =>
+                      handleTestCaseChange(i, "output", e.target.value, type)
+                    }
+                    className="w-full p-3 bg-black/40 border border-white/10 rounded-lg"
                   />
 
                   <button
                     type="button"
-                    onClick={()=>removeTestCase(i,type)}
-                    className="px-3 bg-red-500/20 text-red-300 rounded hover:bg-red-500/30"
+                    onClick={() => removeTestCase(i, type)}
+                    className="px-3 py-2 bg-red-500/20 text-red-300 rounded hover:bg-red-500/30"
                   >
-                    ✕
+                    Remove
                   </button>
 
                 </div>
@@ -218,7 +243,7 @@ function AddProblem() {
 
               <button
                 type="button"
-                onClick={()=>addTestCase(type)}
+                onClick={() => addTestCase(type)}
                 className="text-sm text-blue-400 hover:text-blue-300"
               >
                 + Add Test Case
@@ -226,7 +251,7 @@ function AddProblem() {
             </div>
           ))}
 
-          <button className="w-full bg-white text-black p-3 rounded-lg font-medium hover:bg-gray-200">
+          <button className="w-full bg-white text-black p-3 rounded-lg font-medium hover:bg-gray-200 transition">
             Create Problem
           </button>
 

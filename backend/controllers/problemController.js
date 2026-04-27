@@ -1,77 +1,111 @@
-const Problem = require("../models/Problem")
+const Problem = require("../models/Problem");
 
-// get all problems (SAFE)
+const allowedTopics = [
+  "array",
+  "string",
+  "math",
+  "recursion",
+  "dp",
+  "graph",
+  "greedy"
+];
+
+const allowedDifficulties = ["easy", "medium", "hard"];
+
 const getProblems = async (req, res) => {
   try {
-    const problems = await Problem.find().select("-hiddenTestCases")
-    res.json(problems)
+    const problems = await Problem.find().select("-hiddenTestCases");
+    res.json(problems);
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    res.status(500).json({ message: error.message });
   }
-}
+};
 
-// create problem
 const createProblem = async (req, res) => {
-  const {
-    title,
-    description,
-    difficulty,
-    topic,
-    sampleTestCases,
-    hiddenTestCases
-  } = req.body
-
   try {
+    let {
+      title,
+      description,
+      difficulty,
+      topic,
+      sampleTestCases,
+      hiddenTestCases
+    } = req.body;
+
+    difficulty = difficulty.toLowerCase();
+    topic = topic.toLowerCase();
+
+    if (!title || !description) {
+      return res.status(400).json({ message: "Title and description required" });
+    }
+
+    if (!allowedTopics.includes(topic)) {
+      return res.status(400).json({ message: "Invalid topic" });
+    }
+
+    if (!allowedDifficulties.includes(difficulty)) {
+      return res.status(400).json({ message: "Invalid difficulty" });
+    }
+
+    if (
+      !sampleTestCases.length ||
+      !hiddenTestCases.length
+    ) {
+      return res.status(400).json({ message: "Test cases required" });
+    }
+
     const problem = await Problem.create({
       title,
       description,
-      difficulty: difficulty.toLowerCase(),
-      topic: topic.toLowerCase(),
+      difficulty,
+      topic,
       sampleTestCases,
       hiddenTestCases
-})
+    });
 
-    res.status(201).json(problem)
-  } catch {
-    res.status(500).json({ message: "Failed to create problem" })
+    res.status(201).json(problem);
+
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create problem" });
   }
-}
+};
 
-// get single problem (SAFE)
 const getProblemById = async (req, res) => {
   try {
     const problem = await Problem.findById(req.params.id)
-      .select("-hiddenTestCases")
+      .select("-hiddenTestCases");
 
     if (!problem) {
-      return res.status(404).json({ message: "Problem not found" })
+      return res.status(404).json({ message: "Problem not found" });
     }
 
-    res.json(problem)
+    res.json(problem);
+
   } catch {
-    res.status(500).json({ message: "Error fetching problem" })
+    res.status(500).json({ message: "Error fetching problem" });
   }
-}
+};
 
 const deleteProblem = async (req, res) => {
   try {
-    const problem = await Problem.findById(req.params.id)
+    const problem = await Problem.findById(req.params.id);
 
     if (!problem) {
-      return res.status(404).json({ message: "Problem not found" })
+      return res.status(404).json({ message: "Problem not found" });
     }
 
-    await problem.deleteOne()
-    res.json({ message: "Problem deleted successfully" })
+    await problem.deleteOne();
+
+    res.json({ message: "Problem deleted successfully" });
 
   } catch {
-    res.status(500).json({ message: "Delete failed" })
+    res.status(500).json({ message: "Delete failed" });
   }
-}
+};
 
 module.exports = {
   getProblems,
   getProblemById,
   createProblem,
   deleteProblem
-}
+};
