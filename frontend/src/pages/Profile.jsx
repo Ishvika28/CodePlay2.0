@@ -1,35 +1,55 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  Sword, 
-  Menu, 
-  X, 
-  LayoutDashboard, 
-  PlusCircle, 
-  LogIn, 
-  Trophy, 
-  UserCircle, 
-  Zap, 
-  Activity, 
+import {
+  Sword,
+  Menu,
+  X,
+  LayoutDashboard,
+  PlusCircle,
+  LogIn,
+  Trophy,
+  UserCircle,
+  Zap,
+  Activity,
   Terminal,
   ChevronRight,
   ShieldCheck,
-  Target
+  Target,
 } from "lucide-react";
 
 function Profile() {
   const [user, setUser] = useState(null);
+
+  const [matchCount, setMatchCount] = useState(0);
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
+
       const response = await fetch("http://localhost:5000/api/auth/profile", {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
       const data = await response.json();
+
       setUser(data);
+
+      // MATCH HISTORY
+      const historyRes = await fetch("http://localhost:5000/api/match-history");
+
+      const historyData = await historyRes.json();
+
+      const currentUser = localStorage.getItem("name");
+
+      const personalMatches = historyData.filter((match) =>
+        match.participants?.includes(currentUser),
+      );
+
+      setMatchCount(personalMatches.length);
     } catch (error) {
       console.error(error);
     }
@@ -50,7 +70,9 @@ function Profile() {
       <div className="h-screen w-full bg-[#020617] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-blue-400 font-black tracking-widest uppercase text-xs">Synchronizing Profile...</p>
+          <p className="text-blue-400 font-black tracking-widest uppercase text-xs">
+            Synchronizing Profile...
+          </p>
         </div>
       </div>
     );
@@ -58,7 +80,6 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 relative overflow-x-hidden font-sans">
-      
       {/* --- HYPER-STYLIZED BACKGROUND --- */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] animate-pulse"></div>
@@ -67,7 +88,7 @@ function Profile() {
       </div>
 
       {/* --- SIDEBAR TOGGLE --- */}
-      <button 
+      <button
         onClick={() => setOpen(true)}
         className="fixed top-8 left-8 z-40 p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all hover:scale-110 active:scale-95 shadow-2xl"
       >
@@ -85,20 +106,50 @@ function Profile() {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)]">
               <Sword className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-black tracking-tighter italic">CODEPLAY</span>
+            <span className="text-2xl font-black tracking-tighter italic">
+              CODEPLAY
+            </span>
           </div>
-          <button onClick={() => setOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+          <button
+            onClick={() => setOpen(false)}
+            className="text-slate-500 hover:text-white transition-colors"
+          >
             <X size={24} />
           </button>
         </div>
 
         <nav className="flex flex-col gap-2">
           {[
-            { path: "/dashboard", label: "Overview", icon: <LayoutDashboard size={20} /> },
-            { path: "/create-room", label: "Initialize Room", icon: <PlusCircle size={20} /> },
-            { path: "/join-room", label: "Join Battle", icon: <LogIn size={20} /> },
-            { path: "/leaderboard", label: "Global Ranks", icon: <Trophy size={20} /> },
-            { path: "/profile", label: "Pilot Profile", icon: <UserCircle size={20} /> },
+            {
+              path: "/dashboard",
+              label: "Overview",
+              icon: <LayoutDashboard size={20} />,
+            },
+            {
+              path: "/create-room",
+              label: "Initialize Room",
+              icon: <PlusCircle size={20} />,
+            },
+            {
+              path: "/join-room",
+              label: "Join Battle",
+              icon: <LogIn size={20} />,
+            },
+            {
+              path: "/leaderboard",
+              label: "Global Ranks",
+              icon: <Trophy size={20} />,
+            },
+            {
+              path: "/match-history",
+              label: "Battle Archive",
+              icon: <Activity size={20} />,
+            },
+            {
+              path: "/profile",
+              label: "Pilot Profile",
+              icon: <UserCircle size={20} />,
+            },
           ].map((item, index) => {
             const isActive = item.path === "/profile";
             return (
@@ -107,12 +158,14 @@ function Profile() {
                 to={item.path}
                 onClick={() => setOpen(false)}
                 className={`group flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold tracking-tight ${
-                  isActive 
-                  ? "bg-blue-600/10 border border-blue-500/20 text-white shadow-[0_0_20px_rgba(37,99,235,0.1)]" 
-                  : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
+                  isActive
+                    ? "bg-blue-600/10 border border-blue-500/20 text-white shadow-[0_0_20px_rgba(37,99,235,0.1)]"
+                    : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
                 }`}
               >
-                <span className={`${isActive ? "text-blue-400" : "group-hover:text-blue-400"} transition-colors`}>
+                <span
+                  className={`${isActive ? "text-blue-400" : "group-hover:text-blue-400"} transition-colors`}
+                >
                   {item.icon}
                 </span>
                 {item.label}
@@ -131,12 +184,11 @@ function Profile() {
 
       {/* --- MAIN CONTENT --- */}
       <main className="p-6 md:p-12 lg:pt-24 relative z-10 space-y-10 max-w-[1600px] mx-auto">
-        
         {/* --- PROFILE HERO CARD --- */}
         <section className="relative group rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900/20 backdrop-blur-3xl shadow-2xl p-10 md:p-16 w-full">
           {/* Background Watermark */}
           <div className="absolute top-0 right-[-2%] p-8 text-blue-500/5 opacity-40 select-none hidden xl:block">
-             <UserCircle size={500} strokeWidth={0.5} />
+            <UserCircle size={500} strokeWidth={0.5} />
           </div>
 
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
@@ -152,21 +204,27 @@ function Profile() {
 
             <div className="text-center md:text-left flex-1">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-4">
-                <Zap size={12} className="fill-current" /> Verified Competitive Coder
+                <Zap size={12} className="fill-current" /> Verified Competitive
+                Coder
               </div>
               <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-white uppercase italic mb-2">
                 {user.name}
               </h2>
               <p className="text-slate-500 text-lg font-medium tracking-tight mb-6">
-                {user.email} &bull; <span className="text-blue-500/80 underline decoration-blue-500/20 underline-offset-4 cursor-pointer hover:text-blue-400 transition-colors uppercase italic text-sm">Update Pilot Settings</span>
+                {user.email} &bull;{" "}
+                <span className="text-blue-500/80 underline decoration-blue-500/20 underline-offset-4 cursor-pointer hover:text-blue-400 transition-colors uppercase italic text-sm">
+                  Update Pilot Settings
+                </span>
               </p>
 
               <div className="flex flex-wrap justify-center md:justify-start gap-4">
                 <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-slate-300">
-                  <Activity size={14} className="text-blue-400" /> Member since {new Date().getFullYear()}
+                  <Activity size={14} className="text-blue-400" /> Member since{" "}
+                  {new Date().getFullYear()}
                 </div>
                 <div className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-xs font-bold uppercase tracking-widest text-slate-300">
-                  <Target size={14} className="text-emerald-400" /> Rank: Initiate
+                  <Target size={14} className="text-emerald-400" /> Rank:
+                  Initiate
                 </div>
               </div>
             </div>
@@ -176,18 +234,47 @@ function Profile() {
         {/* --- STATS GRID --- */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { val: user.rating || 0, label: "Pilot Rating", icon: <Trophy className="text-yellow-500" /> },
-            { val: "0", label: "Battle History", icon: <Activity className="text-blue-500" /> },
-            { val: "0", label: "Data Tasks", icon: <Terminal className="text-emerald-500" /> },
-            { val: "--", label: "Global Rank", icon: <Zap className="text-indigo-500" /> },
+            {
+              val: user.rating || 0,
+              label: "Pilot Rating",
+              icon: <Trophy className="text-yellow-500" />,
+            },
+
+            {
+              val: matchCount,
+              label: "Battle History",
+              icon: <Activity className="text-blue-500" />,
+              path: "/match-history",
+            },
+
+            {
+              val: "0",
+              label: "Data Tasks",
+              icon: <Terminal className="text-emerald-500" />,
+            },
+
+            {
+              val: "--",
+              label: "Global Rank",
+              icon: <Zap className="text-indigo-500" />,
+            },
           ].map((stat, i) => (
-            <div key={i} className="bg-[#0b1120]/50 border border-white/5 rounded-3xl p-8 hover:bg-white/5 transition-all group overflow-hidden relative">
+            <div
+              key={i}
+              className="bg-[#0b1120]/50 border border-white/5 rounded-3xl p-8 hover:bg-white/5 transition-all group overflow-hidden relative"
+            >
               <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform">
                 {stat.icon}
               </div>
-              <div className="mb-4 bg-white/5 w-12 h-12 rounded-xl flex items-center justify-center shadow-inner">{stat.icon}</div>
-              <h3 className="text-4xl font-black text-white tracking-tighter mb-1 uppercase italic">{stat.val}</h3>
-              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{stat.label}</p>
+              <div className="mb-4 bg-white/5 w-12 h-12 rounded-xl flex items-center justify-center shadow-inner">
+                {stat.icon}
+              </div>
+              <h3 className="text-4xl font-black text-white tracking-tighter mb-1 uppercase italic">
+                {stat.val}
+              </h3>
+              <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">
+                {stat.label}
+              </p>
             </div>
           ))}
         </section>
@@ -197,32 +284,42 @@ function Profile() {
           {/* About Card */}
           <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-            <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase italic">Pilot Bio</h3>
+            <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase italic">
+              Pilot Bio
+            </h3>
             <p className="text-slate-500 font-medium leading-relaxed">
-              You are an active node in the CodePlay competitive arena. Your profile is your battle log. 
-              As you solve problems and conquer rooms, your rank will evolve. Build your logic, 
-              sharpen your syntax, and prepare for the next deployment.
+              You are an active node in the CodePlay competitive arena. Your
+              profile is your battle log. As you solve problems and conquer
+              rooms, your rank will evolve. Build your logic, sharpen your
+              syntax, and prepare for the next deployment.
             </p>
           </div>
 
           {/* Activity Card */}
           <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-            <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase italic">Recent Logs</h3>
+            <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase italic">
+              Recent Logs
+            </h3>
             <div className="flex flex-col items-center justify-center py-6 text-center space-y-4">
-               <div className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center">
-                  <Activity size={20} className="text-slate-700" />
-               </div>
-               <p className="text-slate-600 font-bold uppercase text-[10px] tracking-widest">No Recent Transmission Found</p>
+              <div className="w-12 h-12 rounded-full border border-slate-800 flex items-center justify-center">
+                <Activity size={20} className="text-slate-700" />
+              </div>
+              <p className="text-slate-600 font-bold uppercase text-[10px] tracking-widest">
+                No Recent Transmission Found
+              </p>
             </div>
           </div>
         </div>
 
         {/* --- CALL TO ACTION --- */}
         <section className="relative overflow-hidden bg-gradient-to-br from-blue-600/10 to-transparent border border-white/5 rounded-[3rem] p-10 md:p-16 text-center">
-          <h3 className="text-4xl font-black tracking-tighter text-white mb-6 uppercase italic">Ready for Deployment?</h3>
+          <h3 className="text-4xl font-black tracking-tighter text-white mb-6 uppercase italic">
+            Ready for Deployment?
+          </h3>
           <p className="text-slate-500 max-w-2xl mx-auto mb-10 font-medium text-lg">
-            Don't let your rating stagnate. The grid is active and rivals are waiting.
+            Don't let your rating stagnate. The grid is active and rivals are
+            waiting.
           </p>
           <Link
             to="/join-room"

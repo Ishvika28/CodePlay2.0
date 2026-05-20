@@ -3,6 +3,7 @@ const leaderboardRoutes = require("./routes/leaderboardRoutes");
 const roomRoutes = require("./routes/roomRoutes");
 const problemRoutes = require("./routes/problemRoutes");
 const submissionRoutes = require("./routes/submissionRoutes");
+const matchHistoryRoutes = require("./routes/matchHistoryRoutes");
 
 const express = require("express");
 const cors = require("cors");
@@ -83,6 +84,8 @@ app.use("/api/problems", problemRoutes);
 app.use("/api/submissions", submissionRoutes);
 
 app.use("/api/leaderboard", leaderboardRoutes);
+
+app.use("/api/match-history", matchHistoryRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend server running 🚀");

@@ -1,31 +1,34 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-import Login from "./pages/Login"
-import Signup from "./pages/Signup"
-import Dashboard from "./pages/Dashboard"
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
 
-import CreateRoom from "./pages/CreateRoom"
-import JoinRoom from "./pages/JoinRoom"
-import Room from "./pages/Room"
-import Problem from "./pages/Problem"
-import Profile from "./pages/Profile"
-import Leaderboard from "./pages/Leaderboard"
+import CreateRoom from "./pages/CreateRoom";
+import JoinRoom from "./pages/JoinRoom";
+import Room from "./pages/Room";
+import Problem from "./pages/Problem";
+import Profile from "./pages/Profile";
+import Leaderboard from "./pages/Leaderboard";
+import MatchHistory from "./pages/MatchHistory";
 
-import SubmitCode from "./components/SubmitCode"
+import SubmitCode from "./components/SubmitCode";
 
-import AdminDashboard from "./pages/AdminDashboard"
-import AddProblem from "./pages/AddProblem"
-import ViewProblems from "./pages/ViewProblems"
+import AdminDashboard from "./pages/AdminDashboard";
+import AddProblem from "./pages/AddProblem";
+import ViewProblems from "./pages/ViewProblems";
 
-import ProtectedRoute from "./components/ProtectedRoute"
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-
   return (
     <Router>
-
       <Routes>
-
         {/* Default */}
         <Route path="/" element={<Navigate to="/login" />} />
 
@@ -98,6 +101,15 @@ function App() {
         />
 
         <Route
+          path="/match-history"
+          element={
+            <ProtectedRoute>
+              <MatchHistory />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/profile"
           element={
             <ProtectedRoute>
@@ -136,11 +148,9 @@ function App() {
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/login" />} />
-
       </Routes>
-
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

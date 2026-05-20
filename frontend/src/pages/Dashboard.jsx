@@ -1,19 +1,19 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { 
-  Sword, 
-  Trophy, 
-  Users, 
-  Terminal, 
-  Zap, 
-  PlusCircle, 
-  LogIn, 
-  ChevronRight, 
-  Activity, 
-  Menu, 
+import {
+  Sword,
+  Trophy,
+  Users,
+  Terminal,
+  Zap,
+  PlusCircle,
+  LogIn,
+  ChevronRight,
+  Activity,
+  Menu,
   X,
   LayoutDashboard,
-  UserCircle
+  UserCircle,
 } from "lucide-react";
 
 function Dashboard() {
@@ -48,12 +48,13 @@ function Dashboard() {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)]">
               <Sword className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-black tracking-tighter text-white uppercase italic">CodePlay</h1>
+            <h1 className="text-xl font-black tracking-tighter text-white uppercase italic">
+              CodePlay
+            </h1>
           </div>
         </div>
 
         <nav className="hidden lg:flex items-center gap-8 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">
-          
           <span className="hover:text-blue-400 cursor-pointer transition-colors flex items-center gap-2 text-blue-400">
             <Zap size={14} className="fill-blue-400" /> Pro League
           </span>
@@ -78,37 +79,73 @@ function Dashboard() {
             <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)]">
               <Sword className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-black tracking-tighter italic">CODEPLAY</span>
+            <span className="text-2xl font-black tracking-tighter italic">
+              CODEPLAY
+            </span>
           </div>
-          <button onClick={() => setOpen(false)} className="text-slate-500 hover:text-white transition-colors">
+          <button
+            onClick={() => setOpen(false)}
+            className="text-slate-500 hover:text-white transition-colors"
+          >
             <X size={24} />
           </button>
         </div>
 
         <div className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/10">
-          <p className="text-xs text-gray-400 mb-1 font-bold uppercase tracking-widest">Current Status</p>
-          <h3 className="font-semibold text-white flex items-center gap-2">Ready to Compete ⚡</h3>
+          <p className="text-xs text-gray-400 mb-1 font-bold uppercase tracking-widest">
+            Current Status
+          </p>
+          <h3 className="font-semibold text-white flex items-center gap-2">
+            Ready to Compete ⚡
+          </h3>
         </div>
 
         <nav className="flex flex-col gap-2">
           {[
-            { path: "/dashboard", label: "Overview", icon: <LayoutDashboard size={20} /> },
-            { path: "/create-room", label: "Initialize Room", icon: <PlusCircle size={20} /> },
-            { path: "/join-room", label: "Join Battle", icon: <LogIn size={20} /> },
-            { path: "/leaderboard", label: "Global Ranks", icon: <Trophy size={20} /> },
-            { path: "/profile", label: "Pilot Profile", icon: <UserCircle size={20} /> },
+            {
+              path: "/dashboard",
+              label: "Overview",
+              icon: <LayoutDashboard size={20} />,
+            },
+            {
+              path: "/create-room",
+              label: "Initialize Room",
+              icon: <PlusCircle size={20} />,
+            },
+            {
+              path: "/join-room",
+              label: "Join Battle",
+              icon: <LogIn size={20} />,
+            },
+            {
+              path: "/leaderboard",
+              label: "Global Ranks",
+              icon: <Trophy size={20} />,
+            },
+            {
+              path: "/match-history",
+              label: "Battle Archive",
+              icon: <Activity size={20} />,
+            },
+            {
+              path: "/profile",
+              label: "Pilot Profile",
+              icon: <UserCircle size={20} />,
+            },
           ].map((item, index) => (
             <Link
               key={index}
               to={item.path}
               onClick={() => setOpen(false)}
               className={`group flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold tracking-tight ${
-                item.path === "/dashboard" 
-                ? "bg-blue-600/10 border border-blue-500/20 text-white shadow-[0_0_20px_rgba(37,99,235,0.1)]" 
-                : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
+                item.path === "/dashboard"
+                  ? "bg-blue-600/10 border border-blue-500/20 text-white shadow-[0_0_20px_rgba(37,99,235,0.1)]"
+                  : "text-slate-400 hover:text-white hover:bg-white/5 border border-transparent"
               }`}
             >
-              <span className={`${item.path === "/dashboard" ? "text-blue-400" : "group-hover:text-blue-400"} transition-colors`}>
+              <span
+                className={`${item.path === "/dashboard" ? "text-blue-400" : "group-hover:text-blue-400"} transition-colors`}
+              >
                 {item.icon}
               </span>
               {item.label}
@@ -126,25 +163,27 @@ function Dashboard() {
 
       {/* MAIN CONTENT */}
       <main className="p-6 md:p-12 relative z-10 space-y-12 max-w-7xl mx-auto">
-        
         {/* --- HERO SECTION: THE COMMAND CENTER --- */}
         <section className="relative group rounded-[3rem] overflow-hidden border border-white/5 bg-slate-900/20 backdrop-blur-3xl shadow-2xl p-10 md:p-16 text-center md:text-left">
           <div className="absolute top-0 right-0 p-8 text-blue-500/20 opacity-50 select-none">
-             <Terminal size={300} strokeWidth={1} />
+            <Terminal size={300} strokeWidth={1} />
           </div>
-          
+
           <div className="relative z-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-              <Zap size={12} className="fill-current" /> Active Deployment: 2.0.4
+              <Zap size={12} className="fill-current" /> Active Deployment:
+              2.0.4
             </div>
-            
+
             <h2 className="text-5xl md:text-7xl font-black leading-[0.95] tracking-tighter mb-8 text-white">
               CODE. <span className="text-blue-500">COMPETE.</span> <br />
               DOMINATE.
             </h2>
 
             <p className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed mb-10 max-w-xl">
-              The ultimate high-frequency battleground for elite developers. Sync with the grid, initiate combat, and climb the global sequence.
+              The ultimate high-frequency battleground for elite developers.
+              Sync with the grid, initiate combat, and climb the global
+              sequence.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-5">
@@ -167,18 +206,50 @@ function Dashboard() {
         {/* --- DYNAMIC STATS GRID --- */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            { val: "500+", label: "Combatants", icon: <Users className="text-blue-500" /> },
-            { val: "120+", label: "Active Nodes", icon: <Activity className="text-indigo-500" /> },
-            { val: "1k+", label: "Solved Tasks", icon: <Terminal className="text-emerald-500" /> },
-            { val: "0.4ms", label: "Sync Latency", icon: <Zap className="text-yellow-500" /> },
+            {
+              val: "500+",
+              label: "Combatants",
+              icon: <Users className="text-blue-500" />,
+            },
+            {
+              val: "120+",
+              label: "Active Nodes",
+              icon: <Activity className="text-indigo-500" />,
+            },
+            {
+              val: "1k+",
+              label: "Solved Tasks",
+              icon: <Terminal className="text-emerald-500" />,
+            },
+            {
+              val: "0.4ms",
+              label: "Sync Latency",
+              icon: <Zap className="text-yellow-500" />,
+            },
           ].map((stat, i) => (
-            <div key={i} className="bg-[#0b1120]/50 border border-white/5 rounded-3xl p-8 hover:bg-white/5 transition-all group overflow-hidden relative">
+            <div
+              key={i}
+              onClick={() => {
+                if (stat.path) {
+                  navigate(stat.path);
+                }
+              }}
+              className={`bg-[#0b1120]/50 border border-white/5 rounded-3xl p-8 hover:bg-white/5 transition-all group overflow-hidden relative ${
+                stat.path ? "cursor-pointer hover:scale-[1.02]" : ""
+              }`}
+            >
               <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform">
                 {stat.icon}
               </div>
-              <div className="mb-4 bg-white/5 w-12 h-12 rounded-xl flex items-center justify-center">{stat.icon}</div>
-              <h3 className="text-4xl font-black text-white tracking-tighter mb-1">{stat.val}</h3>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">{stat.label}</p>
+              <div className="mb-4 bg-white/5 w-12 h-12 rounded-xl flex items-center justify-center">
+                {stat.icon}
+              </div>
+              <h3 className="text-4xl font-black text-white tracking-tighter mb-1">
+                {stat.val}
+              </h3>
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
+                {stat.label}
+              </p>
             </div>
           ))}
         </section>
@@ -186,32 +257,40 @@ function Dashboard() {
         {/* --- ACTION CARDS --- */}
         <section className="grid md:grid-cols-3 gap-8">
           {[
-            { 
-              title: "Create Room", 
+            {
+              title: "Create Room",
               desc: "Deploy a custom private node. Set your rules, select your problem set, and challenge the network.",
               link: "/create-room",
-              color: "blue"
+              color: "blue",
             },
-            { 
-              title: "Join Signal", 
+            {
+              title: "Join Signal",
               desc: "Enter the code to sync with an active contest. Prove your speed under high-pressure live conditions.",
               link: "/join-room",
-              color: "indigo"
+              color: "indigo",
             },
-            { 
-              title: "Top 100", 
+            {
+              title: "Top 100",
               desc: "The absolute elite. Analyze the top performing sequences and optimize your standing in the grid.",
               link: "/leaderboard",
-              color: "emerald"
-            }
+              color: "emerald",
+            },
           ].map((card, i) => (
-            <div key={i} className="group relative bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 hover:border-blue-500/30 transition-all duration-500 overflow-hidden">
+            <div
+              key={i}
+              className="group relative bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 hover:border-blue-500/30 transition-all duration-500 overflow-hidden"
+            >
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-700"></div>
-              <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase">{card.title}</h3>
+              <h3 className="text-2xl font-black text-white tracking-tighter mb-4 uppercase">
+                {card.title}
+              </h3>
               <p className="text-slate-500 font-medium leading-relaxed mb-8">
                 {card.desc}
               </p>
-              <Link to={card.link} className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-widest group-hover:gap-4 transition-all">
+              <Link
+                to={card.link}
+                className="flex items-center gap-2 text-blue-400 font-black text-xs uppercase tracking-widest group-hover:gap-4 transition-all"
+              >
                 Engage <ChevronRight size={16} />
               </Link>
             </div>
@@ -222,15 +301,21 @@ function Dashboard() {
         <section className="relative overflow-hidden bg-gradient-to-br from-blue-600/10 to-transparent border border-white/5 rounded-[3rem] p-10 md:p-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h3 className="text-4xl font-black tracking-tighter text-white mb-6 uppercase">Why the Grid chooses <br/>CodePlay?</h3>
+              <h3 className="text-4xl font-black tracking-tighter text-white mb-6 uppercase">
+                Why the Grid chooses <br />
+                CodePlay?
+              </h3>
               <div className="grid gap-6">
                 {[
                   "Synchronized real-time battle logic",
                   "Host-managed administrative override",
                   "Low-latency global problem clusters",
-                  "Advanced ranked sequence tracking"
+                  "Advanced ranked sequence tracking",
                 ].map((text, i) => (
-                  <div key={i} className="flex items-center gap-4 text-slate-300 font-bold tracking-tight">
+                  <div
+                    key={i}
+                    className="flex items-center gap-4 text-slate-300 font-bold tracking-tight"
+                  >
                     <div className="w-6 h-6 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
                       <Zap size={12} className="fill-current" />
                     </div>
@@ -240,11 +325,12 @@ function Dashboard() {
               </div>
             </div>
             <div className="hidden md:block bg-black/40 rounded-3xl p-8 border border-white/5 italic font-mono text-sm text-blue-400">
-               <span className="text-slate-600">// SYSTEM_INITIALIZATION</span> <br/>
-               {">"} loading arena... [OK] <br/>
-               {">"} establishing sync... [OK] <br/>
-               {">"} latency 0.04ms <br/>
-               {">"} Welcome back, Pilot.
+              <span className="text-slate-600">// SYSTEM_INITIALIZATION</span>{" "}
+              <br />
+              {">"} loading arena... [OK] <br />
+              {">"} establishing sync... [OK] <br />
+              {">"} latency 0.04ms <br />
+              {">"} Welcome back, Pilot.
             </div>
           </div>
         </section>
