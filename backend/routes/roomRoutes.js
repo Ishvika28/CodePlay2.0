@@ -7,12 +7,14 @@ const {
   createRoom,
   joinRoom,
   getRoom,
-  startRoom
+  startRoom,
+  finishRoom
 } = require("../controllers/roomController")
 
 router.post("/create", protect, createRoom)
 router.post("/join", protect, joinRoom)
 router.get("/:roomCode", protect, getRoom)
 router.post("/:roomCode/start", protect, startRoom)
+router.post("/:roomCode/finish", protect, finishRoom)
 
 module.exports = router   

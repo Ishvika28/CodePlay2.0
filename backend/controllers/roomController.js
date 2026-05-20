@@ -121,9 +121,62 @@ const startRoom = async (req, res) => {
   }
 }
 
+const finishRoom = async (req, res) => {
+
+  try {
+
+    const room = await Room.findOne({
+      roomCode: req.params.roomCode
+    });
+
+    if (!room) {
+
+      return res.status(404).json({
+        message: "Room not found"
+      });
+    }
+
+    // Only host can finish contest
+    if (
+      room.host.toString()
+      !== req.user._id.toString()
+    ) {
+
+      return res.status(403).json({
+        message: "Only host can finish contest"
+      });
+    }
+
+    room.status = "finished";
+
+    await room.save();
+
+    // SOCKET UPDATE
+    const io = req.app.get("io");
+
+    io.to(room.roomCode).emit(
+      "contestEnded",
+      {
+        roomCode: room.roomCode
+      }
+    );
+
+    res.json({
+      message: "Contest finished successfully"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Failed to finish contest"
+    });
+  }
+};
+
 module.exports = {
   createRoom,
   joinRoom,
   getRoom,
-  startRoom
+  startRoom,
+  finishRoom
 }
