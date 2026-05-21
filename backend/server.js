@@ -18,7 +18,10 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors());
+app.use(cors({
+  origin: "https://code-play2-0.vercel.app",
+  credentials: true
+}));
 
 // =========================
 // CREATE HTTP SERVER
@@ -32,7 +35,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://code-play2-0.vercel.app",
     methods: ["GET", "POST"]
   }
 });
