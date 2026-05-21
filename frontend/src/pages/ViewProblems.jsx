@@ -14,7 +14,7 @@ function ViewProblems() {
 
   const fetchProblems = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/problems");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/problems`);
       const data = await res.json();
       setProblems(data);
     } catch (err) {
@@ -30,7 +30,7 @@ function ViewProblems() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://localhost:5000/api/problems/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/problems/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`

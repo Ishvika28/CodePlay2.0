@@ -48,14 +48,14 @@ function Leaderboard() {
 
   useEffect(() => {
 
-    const socket = io("http://localhost:5000");
+    const socket = io(import.meta.env.VITE_API_URL);
 
     const fetchLeaderboard = async () => {
 
       try {
 
         const res = await fetch(
-          `http://localhost:5000/api/leaderboard/${roomCode}`
+          `${import.meta.env.VITE_API_URL}/api/leaderboard/${roomCode}`
         );
 
         const data = await res.json();

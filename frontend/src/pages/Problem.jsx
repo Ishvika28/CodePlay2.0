@@ -136,9 +136,9 @@ function Problem() {
         const token = localStorage.getItem("token");
 
         const [probRes, roomRes] = await Promise.all([
-          fetch(`http://localhost:5000/api/problems/${problemId}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/problems/${problemId}`),
 
-          fetch(`http://localhost:5000/api/rooms/${roomCode}`, {
+          fetch(`${import.meta.env.VITE_API_URL}/api/rooms/${roomCode}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -169,12 +169,12 @@ function Problem() {
   }, [problemId, roomCode]);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000");
+    const socket = io(import.meta.env.VITE_API_URL);
 
     const fetchLeaderboard = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/leaderboard/${roomCode}`,
+          `${import.meta.env.VITE_API_URL}/api/leaderboard/${roomCode}`,
         );
 
         const data = await res.json();
@@ -373,7 +373,7 @@ function Problem() {
                 const token = localStorage.getItem("token");
 
                 await fetch(
-                  `http://localhost:5000/api/rooms/${roomCode}/finish`,
+                  `${import.meta.env.VITE_API_URL}/api/rooms/${roomCode}/finish`,
                   {
                     method: "POST",
                     headers: {

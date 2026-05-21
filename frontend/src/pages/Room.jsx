@@ -13,7 +13,7 @@ function Room() {
   const fetchRoom = async () => {
     const token = localStorage.getItem("token")
     try {
-      const res = await fetch(`http://localhost:5000/api/rooms/${roomCode}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/rooms/${roomCode}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       const data = await res.json()
@@ -31,7 +31,7 @@ function Room() {
 
   const startContest = async () => {
     const token = localStorage.getItem("token")
-    await fetch(`http://localhost:5000/api/rooms/${roomCode}/start`, {
+    await fetch(`${import.meta.env.VITE_API_URL}/api/rooms/${roomCode}/start`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` }
     })

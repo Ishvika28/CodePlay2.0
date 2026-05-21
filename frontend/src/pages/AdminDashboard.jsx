@@ -17,7 +17,7 @@ function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/problems");
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/problems`);
       const data = await res.json();
 
       const easy = data.filter((p) => p.difficulty === "easy").length;

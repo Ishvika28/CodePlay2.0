@@ -47,7 +47,7 @@ function CreateRoom() {
     e.preventDefault()
     const token = localStorage.getItem("token")
 
-    const res = await fetch("http://localhost:5000/api/rooms/create", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/rooms/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
